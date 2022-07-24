@@ -3,7 +3,16 @@ nav .navbar-brand .blue
 {
     color: #033984;
 }
+.card-header
+{
+    color: black;
+}
 
+.card
+{
+    margin-left: 25px;
+    margin-right: 25px;
+}
 #header
 {
     background-color: dodgerblue;

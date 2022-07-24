@@ -1,18 +1,46 @@
 {% extends "layout.html" %}
 
+{% macro render_input(field, col, showErrors="true")%}
+    <div class="col-{{col}}">
+            {{ field(**kwargs)|safe }}
+        {% if showErrors=="true" and field.errors %}
+        <ul class="errors">
+        {% for error in field.errors %}
+            <li>{{ error}}</li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+{% endmacro %}
+
 {% block title %}
-    Apology
+    Register
 {% endblock %}
 
 {% block main %}
-<div class="card mb-3">
-    <div class="row g-3">
-        <div class="col-6">
-            <img class="img-fluid" src="static/alexander-jawfox-Kl2t5U6Gkm0-unsplash.jpg">
-        </div>
-        <div class="col-6">
-            
+<div class="card">
+    <div class="card-header">
+        Register User
+    </div>
+<form class="row g-3">
+    {{render_input(form.first_name, 6, class="form-control", placeholder="First Name")}}
+    {{render_input(form.last_name, 6, class="form-control", placeholder="Last Name")}}
+    {{render_input(form.dob, 6, class="form-control")}}
+    {{render_input(form.gender, 6, class="form-control")}}
+    {{render_input(form.weight, 5, class="form-control", placeholder="Weight")}}
+    {{render_input(form.weight_unit, 1, class="form-control")}}
+    {{render_input(form.height, 5, class="form-control", placeholder="Height")}}
+    {{render_input(form.weight_unit, 1, class="form-control")}}
+    {{render_input(form.email, 12, class="form-control", placeholder="Email")}}
+    {{render_input(form.uname, 6, class="form-control", placeholder="User Name")}}
+    {{render_input(form.password, 6, class="form-control", placeholder="Password")}}
+    {{render_input(form.confirm, 6, class="form-control", placeholder="Confirm Password")}}
+    <div class ="col-6">
+        <div class="d-grid gap-2">
+            <button class="btn btn-outline-dark" type="submit">Submit</button> 
         </div>
     </div>
+</form>
 </div>
+
 {% endblock %}
