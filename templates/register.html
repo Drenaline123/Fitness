@@ -22,7 +22,7 @@
     <div class="card-header">
         Register User
     </div>
-<form class="row g-3">
+<form class="row g-3" method="POST">
     {{render_input(form.first_name, 6, class="form-control", placeholder="First Name")}}
     {{render_input(form.last_name, 6, class="form-control", placeholder="Last Name")}}
     {{render_input(form.dob, 6, class="form-control")}}
@@ -30,7 +30,7 @@
     {{render_input(form.weight, 5, class="form-control", placeholder="Weight")}}
     {{render_input(form.weight_unit, 1, class="form-control")}}
     {{render_input(form.height, 5, class="form-control", placeholder="Height")}}
-    {{render_input(form.weight_unit, 1, class="form-control")}}
+    {{render_input(form.height_unit, 1, class="form-control")}}
     {{render_input(form.email, 12, class="form-control", placeholder="Email")}}
     {{render_input(form.uname, 6, class="form-control", placeholder="User Name")}}
     {{render_input(form.password, 6, class="form-control", placeholder="Password")}}
