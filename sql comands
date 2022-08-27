@@ -1,0 +1,42 @@
+CREATE TABLE workouts (
+	workout_id  INTEGER PRIMARY KEY,
+   	workout_name TEXT NOT NULL,
+	workout_image TEXT NOT NULL,
+    workout_video TEXT NOT NULL
+);
+
+CREATE TABLE my_workouts (
+	id  INTEGER PRIMARY KEY,
+   	workout_name TEXT NOT NULL,
+	workout_image TEXT NOT NULL,
+    workout_sets INTEGER NOT NULL,
+    workout_reps INTEGER NOT NULL,
+    workout_group INTEGER NOT NULL,
+    user_id INTEGER NOT NULL
+);
+
+CREATE TABLE tracking (
+	id  INTEGER PRIMARY KEY,
+   	workout_group INTEGER NOT NULL,
+	workout_date INTEGER NOT NULL,
+    workout_results_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+);
+
+CREATE TABLE workout_tracking (
+	id  INTEGER PRIMARY KEY,
+   	results_id INTEGER NOT NULL,
+	workout_name TEXT NOT NULL,
+    reps INTEGER NOT NULL,
+    sets INTEGER NOT NULL,
+    weight INTEGER NOT NULL
+);
+
+CREATE TABLE weight_tracking (
+	id  INTEGER PRIMARY KEY,
+   	weight INTEGER NOT NULL,
+	weight_date INTEGER NOT NULL,
+    user_id INTEGER NOT NULL
+);
+
+db.execute('INSERT INTO workouts (workout_name, workout_image, workout_video) VALUES(?,?,?,?,?,?,?,?,?,?,?)', (name, image, video))

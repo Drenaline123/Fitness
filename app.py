@@ -60,10 +60,14 @@ def index():
 @app.route("/register", methods=["POST", "GET"])
 def register():
     form = UserRegistrationForm(request.form)
-    usernames = db.execute( 'SELECT uname FROM users')
-    emails = db.execute( 'SELECT email FROM users')
+
     pattern = "^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&!+=]).*$"
     if request.method == "POST":
+        email =request.form.get('email').lower()
+        db.execute( 'SELECT uname FROM users WHERE uname=?', (request.form.get('uname'),) )
+        usernames = db.fetchall()
+        db.execute( 'SELECT email FROM users WHERE email=?', (email,) )
+        emails = db.fetchall()
         for item in request.form:
             if  not item:
                 error = f'{item} not provided'
@@ -77,10 +81,10 @@ def register():
         elif len(request.form.get('uname'))<6:
             error = "User name is too short"
             return render_template("register.html", form=form, error=error)
-        elif  request.form.get('uname') in usernames:
+        elif  len(usernames) !=0:
             error = "User name is in use"
             return render_template("register.html", form=form, error=error)
-        elif request.form.get('email') in emails:
+        elif len(emails) !=0:
             error = "Email is in use"
             return render_template("register.html", form=form, error=error)
         elif not result:
@@ -97,7 +101,7 @@ def register():
             weight = request.form.get('weight')
             weight_unit = request.form.get('weight_unit')
             gender = request.form.get('gender')
-            password = hash(request.form.get('password'))
+            password = generate_password_hash(request.form.get('password'))
             db.execute('INSERT INTO users (uname, first_name, last_name, email, dob, height, height_unit, weight, weight_unit, gender, password) VALUES(?,?,?,?,?,?,?,?,?,?,?)', (uname, first_name, last_name, email, dob, height, height_unit, weight, weight_unit, gender, password))
             con.commit()
         return redirect('/login')
@@ -107,6 +111,16 @@ def register():
 @app.route("/hompage")
 def hompage():
     return render_template("homepage.html")
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -121,20 +135,24 @@ def login():
         # Ensure username was submitted
         if not request.form.get("uname"):
             error = 'Please enter username'
+            return render_template("login.html", error=error)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
             error = 'Please enter password'
+            return render_template("login.html", error=error)
 
         # Query database for username
         db.execute("SELECT uname, password FROM users WHERE uname = ?",(request.form.get("uname"),))
         rows = db.fetchall()
-        print(rows[0][0])
+
         # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0][1], request.form.get("password")):
+        if  len(rows) != 1 or not check_password_hash(rows[0][1], request.form.get("password")):
             error = 'Invalid username/password'
+            return render_template("login.html", error=error)
         # Remember which user has logged in
-        session["user_id"] = rows[0][0]
+        else:
+            session["user_id"] = rows[0][0]
 
         # Redirect user to home page
         return render_template("homepage.html")
@@ -143,4 +161,33 @@ def login():
     else:
             return render_template("login.html")
 
+
+@app.route("/create", methods=["GET", "POST"])
+def create():
+
+    db.execute( 'SELECT workout_name FROM workouts')
+    workoutsr = db.fetchall()
+    db.execute( 'SELECT workout_image FROM workouts')
+    imagesr = db.fetchall()
+    db.execute( 'SELECT workout_video FROM workouts')
+    videosr = db.fetchall()
+    workouts = []
+    images = []
+    videos = []
+    for workout in workoutsr:
+        workouts.append(workout[0])
+    for image in imagesr:
+        images.append(image[0])
+    for video in videosr:
+        videos.append(video[0])
+
+    if request.method == "POST":
+        if not request.form.get("workout_1"):
+            error = 'Must have atelast 1 workout'
+            return render_template("create.html", error=error)
+        
+        db.execute('INSERT INTO workouts () VALUES()', ())
+        con.commit()
+        return redirect("/create")
+    return render_template("create.html", workouts=workouts, images=images, videos=videos)
 app.run(host="0.0.0.0", port=50100, debug=True)
